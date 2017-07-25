@@ -12,6 +12,14 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
+
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -30,15 +38,9 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   
   var fakeData = {
-    results: [{
-      username: 'shawndrost',
-      text: 'trololo',
-      roomname: '4chan'
-    }]
+    results: []
   };
-  // The outgoing status.
-  var statusCode = 200;
-
+  
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
@@ -55,10 +57,26 @@ var requestHandler = function(request, response) {
       response.writeHead(200, headers);
       response.end(JSON.stringify(fakeData));
     } 
-    
     if (request.method === 'POST') {
-      response.writeHead(201, headers);
+      var results = [];
+      request.on('data', (chunk) => {
+        results.push(chunk);
+      });
+      
+      request.on('end', () => {
+        // json = '';
+        // json += results.toString();
+        results = Buffer.concat(results).toString();
+        fakeData.results.push(results);
+        response.writeHead(201, headers);
+        console.log(fakeData);
+        response.end(results); 
+        
+      });
     }
+  } else {
+    response.writeHead(404, headers);
+    response.end('404');
   }
   
 
@@ -69,23 +87,9 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify('Hello, World!'));
+  // response.end(JSON.stringify('Hello, World!'));
 };
 
-// These headers will allow Cross-Origin Resource Sharing (CORS).
-// This code allows this server to talk to websites that
-// are on different domains, for instance, your chat client.
-//
-// Your chat client is running from a url like file://your/chat/client/index.html,
-// which is considered a different domain.
-//
-// Another way to get around this restriction is to serve you chat
-// client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
+
 
 module.exports.requestHandler = requestHandler;
