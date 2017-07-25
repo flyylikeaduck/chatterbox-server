@@ -46,38 +46,54 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+  const { url, method, postdata } = request;
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   
-  const { url, method, postdata } = request;
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = 'application/json';
+  
   let results = [];
-  if (request.method === 'GET' && request.url === 'http://127.0.0.1:3000/classes/messages') {
-    response.statusCode = 200;
-    results.push(request.postdata);
+  
+  if (request.method === 'GET' && request.url === '/classes/messages') {
+    response.writeHead(200, headers); 
+    response.end();
     // response._data = results;
-    // request.pipe(response);
- 
+  } else if (request.method === 'POST' && request.url === '/classes/messages') {
+    request.on('data', (chunk) => {
+      response._responseCode = 201;
+      results.push(chunk);
+    });
+    request.on('end', () => {
+      json = '';
+      json += results.toString();
+      // results = Buffer.concat(results).toString();
+      console.log('AFTER', results)
+      response.end(results);
+      // response.statusCode = 201;
+      // console.log('POST postData $$$$',request._postData);
+      // results.push(request._postData);
+    });
   } else {
     response.statusCode = 404;
     response.end('Request failed');
   }
-
+  
+  
 
   // The outgoing status.
-  var statusCode = 200;
+  // var statusCode = 200;
   
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'application/json';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  response.writeHead(response._responseCode, headers);
   
   const responseBody = { headers, method, url, results };
 
