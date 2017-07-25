@@ -28,7 +28,14 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
+  
+  var fakeData = {
+    results: [{
+      username: 'shawndrost',
+      text: 'trololo',
+      roomname: '4chan'
+    }]
+  };
   // The outgoing status.
   var statusCode = 200;
 
@@ -43,7 +50,17 @@ var requestHandler = function(request, response) {
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  if (request.url === '/classes/messages') {
+    if (request.method === 'GET') {
+      response.writeHead(200, headers);
+      response.end(JSON.stringify(fakeData));
+    } 
+    
+    if (request.method === 'POST') {
+      response.writeHead(201, headers);
+    }
+  }
+  
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -52,7 +69,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end(JSON.stringify('Hello, World!'));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -71,3 +88,4 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+module.exports.requestHandler = requestHandler;
