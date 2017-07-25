@@ -61,7 +61,7 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'GET',
-      data: { },
+      data: {},
       contentType: 'application/json',
       success: function(data) {
         // Don't bother if we have nothing to work with
@@ -71,7 +71,8 @@ var app = {
         app.messages = data.results;
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
-
+        
+        console.log('objectId:', mostRecentMessage.objectId);
         // Only bother updating the DOM if we have a new message
         if (mostRecentMessage.objectId !== app.lastMessageId) {
           // Update the UI with the fetched rooms
@@ -166,7 +167,7 @@ var app = {
     $message.text(message.text).appendTo($chat);
 
     // Add the message to the UI
-    app.$chats.append($chat);
+    app.$chats.prepend($chat);
 
   },
 

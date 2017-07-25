@@ -17,7 +17,9 @@ var fakeData = {
   results: [{
     username: 'Jono',
     text: 'Do my bidding!', 
-    roomname: 'batman'
+    roomname: 'batman', 
+    objectId: '0',
+    createdAt: Date.now()
   }]
 };
 
@@ -71,18 +73,20 @@ var requestHandler = function(request, response) {
       });
       
       request.on('end', () => {
+        var lastMessageId = fakeData.results[fakeData.results.length - 1].objectId;
+        
         // json = '';
         // json += results.toString();
-        console.log(temp);
+        console.log('temp:', temp);
         var obj = {};
         var arr = Buffer.concat(temp).toString().split('&');
         arr[1] = arr[1].split('+').join(' ');
-        console.log(arr);
         arr.forEach(pair => {
           var miniArr = pair.split('=');
           obj[miniArr[0]] = miniArr[1];
         });
-        
+        obj.createdAt = Date.now();
+        obj.objectId = parseInt(lastMessageId) + 1;
         fakeData.results.push(obj);
         console.log(fakeData);
         // fakeData.results.push(json);
