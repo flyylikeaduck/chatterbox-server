@@ -28,9 +28,21 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  
+  const { url, method, postdata } = request;
+  let results = [];
+  if (request.method === 'GET' && request.url === 'http://127.0.0.1:3000/classes/messages') {
+    response.statusCode = 200;
+    request.pipe(response);
+  } else {
+    response.statusCode = 404;
+    response.end('Request failed');
+  }
+
 
   // The outgoing status.
   var statusCode = 200;
+  
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -54,6 +66,10 @@ var requestHandler = function(request, response) {
   // node to actually send all the data over to the client.
   response.end('Hello, World!');
 };
+
+
+module.exports.requestHandler = requestHandler;
+
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
