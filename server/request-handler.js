@@ -67,7 +67,7 @@ var requestHandler = function(request, response) {
       json = '';
       json += results.toString();
       // results = Buffer.concat(results).toString();
-      console.log('AFTER', results)
+      console.log('AFTER', results);
       response.end(results);
       // response.statusCode = 201;
       // console.log('POST postData $$$$',request._postData);
