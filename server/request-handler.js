@@ -12,6 +12,7 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -35,23 +36,18 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+  const { url, method, postdata } = request;
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   
+
   var fakeData = {
     results: []
   };
   
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
+  var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'text/plain';
 
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
       response.writeHead(200, headers);
@@ -78,7 +74,7 @@ var requestHandler = function(request, response) {
     response.writeHead(404, headers);
     response.end('404');
   }
-  
+
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -87,9 +83,9 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+
   // response.end(JSON.stringify('Hello, World!'));
 };
-
 
 
 module.exports.requestHandler = requestHandler;

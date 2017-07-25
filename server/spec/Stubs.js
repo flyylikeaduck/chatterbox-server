@@ -16,7 +16,7 @@ module.exports = {
       this._ended = true;
       this._data = data;
     }.bind(this);
-  },
+  },          
 
   request: function(url, method, postdata) {
     this.url = url;
@@ -34,6 +34,6 @@ module.exports = {
       }
 
     }.bind(this);
-  }
+  }, 
 
 };
