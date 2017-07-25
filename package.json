@@ -31,7 +31,6 @@
     ]
   },
   "dependencies": {
-
     "nodemon": "^1.11.0",
     "underscore": "^1.8.3"
   }

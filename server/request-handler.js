@@ -14,7 +14,11 @@ this file and include it in basic-server.js so that it actually works.
 
 
 var fakeData = {
-  results: []
+  results: [{
+    username: 'Jono',
+    text: 'Do my bidding!', 
+    roomname: 'batman'
+  }]
 };
 
 var defaultCorsHeaders = {
@@ -44,15 +48,20 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   
 
-  
-
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'application/json';
+  
+  
+  if (request.method === 'OPTIONS') {
+    headers['access-control-allow-headers'] = 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept';
+    response.writeHead(200, headers);
+    response.end();
+  }
 
   if (request.url === '/classes/messages') {
+
     if (request.method === 'GET') {
       response.writeHead(200, headers);
-      console.log(fakeData);
       response.end(JSON.stringify(fakeData));
     } 
     if (request.method === 'POST') {
