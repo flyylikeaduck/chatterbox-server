@@ -13,6 +13,10 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 
+var fakeData = {
+  results: []
+};
+
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -40,33 +44,29 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   
 
-  var fakeData = {
-    results: []
-  };
   
 
   var headers = defaultCorsHeaders;
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
 
   if (request.url === '/classes/messages') {
     if (request.method === 'GET') {
       response.writeHead(200, headers);
+      console.log(fakeData);
       response.end(JSON.stringify(fakeData));
     } 
     if (request.method === 'POST') {
-      var results = [];
       request.on('data', (chunk) => {
-        results.push(chunk);
+        fakeData.results.push(JSON.parse(chunk));
       });
       
       request.on('end', () => {
         // json = '';
         // json += results.toString();
-        results = Buffer.concat(results).toString();
-        fakeData.results.push(results);
+        // // // results = Buffer.concat(results).toString();
+        // fakeData.results.push(json);
         response.writeHead(201, headers);
-        console.log(fakeData);
-        response.end(results); 
+        response.end(JSON.stringify(fakeData.results)); 
         
       });
     }
