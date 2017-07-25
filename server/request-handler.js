@@ -65,17 +65,29 @@ var requestHandler = function(request, response) {
       response.end(JSON.stringify(fakeData));
     } 
     if (request.method === 'POST') {
+      var temp = [];
       request.on('data', (chunk) => {
-        fakeData.results.push(JSON.parse(chunk));
+        temp.push(chunk);
       });
       
       request.on('end', () => {
         // json = '';
         // json += results.toString();
-        // // // results = Buffer.concat(results).toString();
+        console.log(temp);
+        var obj = {};
+        var arr = Buffer.concat(temp).toString().split('&');
+        arr[1] = arr[1].split('+').join(' ');
+        console.log(arr);
+        arr.forEach(pair => {
+          var miniArr = pair.split('=');
+          obj[miniArr[0]] = miniArr[1];
+        });
+        
+        fakeData.results.push(obj);
+        console.log(fakeData);
         // fakeData.results.push(json);
         response.writeHead(201, headers);
-        response.end(JSON.stringify(fakeData.results)); 
+        response.end(JSON.stringify(fakeData)); 
         
       });
     }

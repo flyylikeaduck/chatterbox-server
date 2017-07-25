@@ -45,6 +45,7 @@ var app = {
       data: message,
       success: function (data) {
         // Clear messages input
+        console.log('successful post');
         app.$message.val('');
 
         // Trigger a fetch to update the messages, pass true to animate
@@ -63,13 +64,11 @@ var app = {
       data: { },
       contentType: 'application/json',
       success: function(data) {
-        console.log('$$$', data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
         // Store messages for caching later
         app.messages = data.results;
-
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
 
@@ -119,6 +118,7 @@ var app = {
     app.$roomSelect.html('<option value="__newRoom">New room...</option>');
 
     if (messages) {
+      console.log('working here!');
       var rooms = {};
       messages.forEach(function(message) {
         var roomname = message.roomname;
@@ -148,7 +148,7 @@ var app = {
     if (!message.roomname) {
       message.roomname = 'lobby';
     }
-
+    // console.log(message)
     // Create a div to hold the chats
     var $chat = $('<div class="chat"/>');
 
